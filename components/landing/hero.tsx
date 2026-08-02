@@ -42,15 +42,11 @@ export default function Hero() {
         </p>
 
         <div className="mt-12 flex justify-center gap-5">
-
-          <Button
-            asChild
-            className="rounded-xl bg-indigo-600 px-8 py-6 text-lg"
-          >
             <Link href="/onboarding">
+            <Button className="rounded-xl bg-indigo-600 px-8 py-6 text-lg">
               Get Started
-            </Link>
-          </Button>
+            </Button>
+          </Link>
 
           <Button
             variant="outline"

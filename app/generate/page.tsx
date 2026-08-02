@@ -3,6 +3,7 @@
 import { Brain, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getUserData } from "@/lib/storage";
 
 const steps = [
   "Analyzing your goals...",
@@ -15,7 +16,40 @@ export default function GeneratePage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
 
+  const generatePlan = async () => {
+    try {
+      const user = getUserData();
+
+      if (!user) {
+        console.log("No user data found.");
+        return;
+      }
+
+      const response = await fetch("/api/generate-plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+
+      console.log("API Response:", data);
+
+      // We will save this plan in the next step
+      // localStorage.setItem("studyflow-plan", JSON.stringify(data.plan));
+
+    } catch (error) {
+      console.error("Error calling API:", error);
+    }
+  };
+
   useEffect(() => {
+    if (currentStep === 0) {
+      generatePlan();
+    }
+
     if (currentStep < steps.length - 1) {
       const timer = setTimeout(() => {
         setCurrentStep((prev) => prev + 1);
@@ -54,9 +88,7 @@ export default function GeneratePage() {
             <div
               key={step}
               className={`flex items-center gap-4 rounded-2xl p-4 transition-all ${
-                index <= currentStep
-                  ? "bg-green-50"
-                  : "bg-slate-100"
+                index <= currentStep ? "bg-green-50" : "bg-slate-100"
               }`}
             >
               <CheckCircle2

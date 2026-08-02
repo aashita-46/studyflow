@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { saveUserData } from "@/lib/storage";
 
 const steps = [
   "Welcome",
@@ -12,7 +13,13 @@ const steps = [
 ];
 
 export default function OnboardingPage() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); 
+  const [name, setName] = useState("");
+  const [goal, setGoal] = useState("AI Engineer");
+  const [subjects, setSubjects] = useState("");
+  const [hours, setHours] = useState(3);
+
+
   const router = useRouter();
 
   return (
@@ -50,6 +57,8 @@ export default function OnboardingPage() {
               <input
                 className="mt-4 w-full rounded-xl border p-4"
                 placeholder="Abhishikth"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </>
           )}
@@ -60,7 +69,10 @@ export default function OnboardingPage() {
                 What's your goal?
               </h3>
 
-              <select className="mt-4 w-full rounded-xl border p-4">
+              <select className="mt-4 w-full rounded-xl border p-4"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              >
 
                 <option>Software Engineer</option>
 
@@ -81,6 +93,8 @@ export default function OnboardingPage() {
               <textarea
                 className="mt-4 h-40 w-full rounded-xl border p-4"
                 placeholder="DSA, Agentic AI, Research Papers..."
+                value={subjects}
+                onChange={(e) => setSubjects(e.target.value)}
               />
             </>
           )}
@@ -94,7 +108,8 @@ export default function OnboardingPage() {
               <input
                 type="number"
                 className="mt-4 w-full rounded-xl border p-4"
-                placeholder="3"
+                value={hours}
+                onChange={(e) => setHours(Number(e.target.value))}
               />
             </>
           )}
@@ -116,7 +131,19 @@ export default function OnboardingPage() {
               Next
             </Button>
           ) : (
-            <Button onClick={() => router.push("/generate")}>
+            <Button onClick={() =>{
+                saveUserData({
+                    name,
+                    goal,
+                subjects: subjects
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+                hours,
+            });
+            router.push("/generate");
+        }}
+            >
               Generate My Study Flow
             </Button>
           )}

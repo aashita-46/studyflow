@@ -1,40 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(req: NextRequest) {
+  const user = await req.json();
+
+  const plan = user.subjects.map(
+    (subject: string, index: number) => ({
+      id: index + 1,
+      subject,
+      topic: `Introduction to ${subject}`,
+      duration: Math.floor(user.hours * 60 / user.subjects.length),
+      priority: index === 0 ? "High" : "Medium",
+      completed: false,
+    })
+  );
+
   return NextResponse.json({
     success: true,
-    message: "API Working 🚀",
-  });
-}
-
-export async function POST() {
-  return NextResponse.json({
-    success: true,
-    plan: [
-      {
-        id: 1,
-        subject: "DSA",
-        topic: "Graphs",
-        duration: 75,
-        priority: "High",
-        completed: false,
-      },
-      {
-        id: 2,
-        subject: "Agentic AI",
-        topic: "MCP Lecture",
-        duration: 60,
-        priority: "Medium",
-        completed: false,
-      },
-      {
-        id: 3,
-        subject: "Research Papers",
-        topic: "LegalBench",
-        duration: 30,
-        priority: "Low",
-        completed: false,
-      },
-    ],
+    plan,
   });
 }
